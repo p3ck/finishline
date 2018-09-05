@@ -1,0 +1,17 @@
+install:
+	test -d ./node_modules/md2gslides/bin/ || npm install md2gslides
+	test -d venv || virtualenv venv
+	venv/bin/pip install -Ur requirements.txt
+
+buildstatus: install
+	venv/bin/python finishline \
+		--config contra.conf > foo.md
+
+uploadstatus: buildstatus
+	./node_modules/md2gslides/bin/md2gslides.js foo.md \
+		-t "Contra Status Report" \
+		-e -a 1ETq2Epjp-YWLJtULnPo3GXod85u3c4J8rZ-NNCzb-4o
+
+buildemail: install
+	venv/bin/python finishline \
+		--config contra.conf > report-$(shell date '+%F').md
